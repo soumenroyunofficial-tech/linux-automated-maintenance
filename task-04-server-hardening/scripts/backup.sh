@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 umask 077
+ENV_BACKUP_DIR="${BACKUP_DIR:-}"
+ENV_RETENTION_DAYS="${RETENTION_DAYS:-}"
 CONFIG_FILE="${CONFIG_FILE:-/etc/server-hardening.conf}"
 if [[ -r "$CONFIG_FILE" ]]; then
   # shellcheck disable=SC1090
   source "$CONFIG_FILE"
 fi
-BACKUP_DIR="${BACKUP_DIR:-/var/backups/server-hardening}"
-RETENTION_DAYS="${RETENTION_DAYS:-14}"
+BACKUP_DIR="${ENV_BACKUP_DIR:-${BACKUP_DIR:-/var/backups/server-hardening}}"
+RETENTION_DAYS="${ENV_RETENTION_DAYS:-${RETENTION_DAYS:-14}}"
+unset ENV_BACKUP_DIR ENV_RETENTION_DAYS
 LOG_DIR=/var/log/server-hardening
 LOG_FILE=$LOG_DIR/backup.log
 LOCK=/run/lock/server-hardening-backup.lock
