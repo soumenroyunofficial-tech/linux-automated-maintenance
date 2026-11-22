@@ -30,8 +30,15 @@ Use this procedure to bring a new Debian/Ubuntu server into service. It assumes 
    sudo bash scripts/provision.sh
    ~~~
 
-4. Keep the original session open.
-5. From a second terminal, test the configured administrator and port:
+4. Keep the original session and provider console open.
+5. From the provider console, set a password for the administrator so sudo can authenticate:
+
+   ~~~bash
+   sudo passwd opsadmin
+   ~~~
+
+   Replace the sample username. The provisioning script creates a random, undisclosed initial password hash for a new account; this step sets the password known to the administrator. SSH password authentication remains disabled.
+6. From a second terminal, test the configured administrator and port:
 
    ~~~bash
    ssh -p 22 opsadmin@SERVER_ADDRESS
