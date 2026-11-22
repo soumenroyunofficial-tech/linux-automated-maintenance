@@ -17,8 +17,8 @@ fail(){ log "ERROR: $*"; exit 1; }
 cleanup(){ [[ -z "$TMP" ]] || rm -f -- "$TMP"; rmdir "$LOCK" 2>/dev/null || true; }
 trap cleanup EXIT
 trap 'fail "Command failed near line $LINENO."' ERR
-[[ $EUID -eq 0 ]] || fail "Run as root."
 [[ "$RETENTION_DAYS" =~ ^[0-9]+$ ]] && ((RETENTION_DAYS>=1 && RETENTION_DAYS<=365)) || fail "RETENTION_DAYS must be 1..365."
+[[ $EUID -eq 0 ]] || fail "Run as root."
 install -d -m 750 "$LOG_DIR"
 install -d -m 700 "$BACKUP_DIR"
 mkdir "$LOCK" 2>/dev/null || fail "Backup lock exists; check for another or stale run."
