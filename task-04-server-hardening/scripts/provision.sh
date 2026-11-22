@@ -25,8 +25,17 @@ source "$CONFIG_FILE"
 command -v apt-get >/dev/null || die "This script supports Debian/Ubuntu with apt-get."
 log "Provisioning started; dry_run=$DRY_RUN"
 run apt-get update
-run apt-get install -y openssh-server ufw logrotate cron
-if ! getent passwd "$ADMIN_USER" >/dev/null; then run useradd --create-home --shell /bin/bash "$ADMIN_USER"; fi
+run apt-get install -y openssh-server ufw logrotate cron openssl
+if ! getent passwd "$ADMIN_USER" >/dev/null; then
+  run useradd --create-home --shell /bin/bash "$ADMIN_USER"
+  if ((DRY_RUN)); then
+    log "Would initialize a random temporary password hash; set the administrator's own password from the recovery console after provisioning."
+  else
+    INITIAL_PASSWORD="$(openssl rand -base64 48)"
+    printf '%s:%s\n' "$ADMIN_USER" "$INITIAL_PASSWORD" | chpasswd
+    unset INITIAL_PASSWORD
+  fi
+fi
 run usermod -aG sudo "$ADMIN_USER"
 if ((DRY_RUN)); then
   log "Would install the configured public key for $ADMIN_USER."
@@ -53,9 +62,16 @@ KbdInteractiveAuthentication no
 X11Forwarding no
 AllowAgentForwarding no
 EOF
-  [[ ! -e "$DROPIN" ]] || cp -a "$DROPIN" "$DROPIN.bak.$(date +%Y%m%d%H%M%S)"
+  PREVIOUS_DROPIN=""
+  if [[ -e "$DROPIN" ]]; then
+    PREVIOUS_DROPIN="$DROPIN.bak.$(date +%Y%m%d%H%M%S)"
+    cp -a "$DROPIN" "$PREVIOUS_DROPIN"
+  fi
   install -m 644 "$TMP" "$DROPIN"; rm -f "$TMP"
-  sshd -t || die "sshd config invalid; restore previous drop-in before reload."
+  if ! sshd -t; then
+    if [[ -n "$PREVIOUS_DROPIN" ]]; then cp -a "$PREVIOUS_DROPIN" "$DROPIN"; else rm -f "$DROPIN"; fi
+    die "sshd config invalid; previous drop-in restored (if one existed). No SSH reload was attempted."
+  fi
 fi
 # Open SSH first; then set restrictive defaults and enable UFW.
 run ufw allow "$SSH_PORT/tcp"
