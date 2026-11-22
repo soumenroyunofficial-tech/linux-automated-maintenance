@@ -89,13 +89,15 @@ if ((DRY_RUN)); then log "Would install backup script, daily job and logrotate p
   logrotate -d /etc/logrotate.d/server-hardening >/dev/null
 fi
 if ((DRY_RUN)); then
-  log "Would enable and reload the installed SSH service."
+  log "Would enable and reload the installed SSH service and cron scheduler."
 elif systemctl list-unit-files | grep -q '^ssh\\.service'; then
   systemctl enable --now ssh
   systemctl reload-or-restart ssh
+  systemctl enable --now cron
 elif systemctl list-unit-files | grep -q '^sshd\\.service'; then
   systemctl enable --now sshd
   systemctl reload-or-restart sshd
+  systemctl enable --now cron
 else
   die "No ssh.service or sshd.service unit found."
 fi
