@@ -4,7 +4,7 @@ This public repository contains practical Linux Administration internship projec
 
 ## Project index
 
-- **Task 03 — Automation Script:** [Project files and documentation](./README.md) — unattended maintenance reporting, timestamped logs, error handling, and repeat-run safety.
+- **Task 03 — Automation Script:** [Project files and documentation](./README.md#linux-automated-maintenance) — unattended maintenance reporting, timestamped logs, error handling, and repeat-run safety.
 - **Task 04 — Capstone: Server Hardening Runbook:** [Open project folder](./task-04-server-hardening/) — provisioning, SSH and UFW hardening, backups, log rotation, smoke tests, and operational recovery runbook.
 
 Task 04 validation includes Linux smoke tests and a real backup archive integrity test. Full provisioning changes are intentionally not applied to a live host; use an isolated VM and follow the runbook.
