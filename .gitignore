@@ -1,0 +1,10 @@
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local test output and generated maintenance data
+*.log
+*.tmp
+maintenance-data/
