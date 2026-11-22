@@ -25,7 +25,7 @@ trap 'fail "Command failed near line $LINENO."' ERR
 install -d -m 750 "$LOG_DIR"
 install -d -m 700 "$BACKUP_DIR"
 mkdir "$LOCK" 2>/dev/null || fail "Backup lock exists; check for another or stale run."
-HOST="$(hostname -s)"; STAMP="$(date +%Y%m%d-%H%M%S)"
+HOST="$(hostname -s)"; STAMP="$(date +%Y%m%d-%H%M%S)-$"
 FINAL="$BACKUP_DIR/$HOST-config-$STAMP.tar.gz"
 TMP="$(mktemp "$BACKUP_DIR/.backup.XXXXXX")"
 SOURCES=()
