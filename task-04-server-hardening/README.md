@@ -40,7 +40,9 @@ Apply on a console-accessible test server:
 sudo bash scripts/provision.sh
 ~~~
 
-The script installs packages, creates the administrator if missing, adds it to sudo, installs the public key idempotently, writes an SSH drop-in, validates it with sshd -t, allows the configured SSH port before enabling UFW, and installs the backup job and logrotate policy.
+The script installs packages, creates the administrator if missing, adds it to sudo, initializes a random undisclosed password hash for a newly created account, installs the public key idempotently, writes an SSH drop-in, validates it with sshd -t (restoring the previous drop-in if validation fails), allows the configured SSH port before enabling UFW, and installs the backup job and logrotate policy.
+
+From the provider console, set the administrator's own password before relying on sudo (for example, sudo passwd opsadmin, using the configured username). The random initial password is not displayed or saved. Password-based SSH authentication remains disabled.
 
 ## Verify
 
