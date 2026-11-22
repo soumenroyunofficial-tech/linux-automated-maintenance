@@ -51,6 +51,7 @@ sudo sshd -t
 sudo sshd -T | grep -E '^(port|permitrootlogin|passwordauthentication|pubkeyauthentication) '
 sudo ufw status verbose
 sudo systemctl status ssh --no-pager
+sudo systemctl status cron --no-pager
 sudo /usr/local/sbin/server-hardening-backup.sh
 sudo ls -lh /var/backups/server-hardening/
 sudo logrotate -d /etc/logrotate.d/server-hardening
