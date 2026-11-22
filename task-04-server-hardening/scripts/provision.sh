@@ -72,7 +72,15 @@ if ((DRY_RUN)); then log "Would install backup script, daily job and logrotate p
   install -m 644 "$HERE/../config/logrotate-server-hardening" /etc/logrotate.d/server-hardening
   logrotate -d /etc/logrotate.d/server-hardening >/dev/null
 fi
-if systemctl list-unit-files | grep -q '^ssh\.service'; then run systemctl enable --now ssh; run systemctl reload-or-restart ssh
-elif systemctl list-unit-files | grep -q '^sshd\.service'; then run systemctl enable --now sshd; run systemctl reload-or-restart sshd
-else die "No ssh.service or sshd.service unit found."; fi
+if ((DRY_RUN)); then
+  log "Would enable and reload the installed SSH service."
+elif systemctl list-unit-files | grep -q '^ssh\\.service'; then
+  systemctl enable --now ssh
+  systemctl reload-or-restart ssh
+elif systemctl list-unit-files | grep -q '^sshd\\.service'; then
+  systemctl enable --now sshd
+  systemctl reload-or-restart sshd
+else
+  die "No ssh.service or sshd.service unit found."
+fi
 log "Provisioning complete. Test key login in a second session before closing this one."
