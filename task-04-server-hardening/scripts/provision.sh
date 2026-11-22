@@ -8,7 +8,7 @@ DRY_RUN=0
 log(){ printf '[%s] %s\n' "$(date -Is)" "$*"; }
 die(){ log "ERROR: $*"; exit 1; }
 run(){ if ((DRY_RUN)); then printf '[DRY-RUN]'; printf ' %q' "$@"; printf '\n'; else "$@"; fi; }
-[[ $EUID -eq 0 ]] || die "Run as root."
+((DRY_RUN)) || [[ $EUID -eq 0 ]] || die "Run as root (dry-run may be run without root)."
 [[ -r "$CONFIG_FILE" ]] || die "Config not readable: $CONFIG_FILE"
 # shellcheck disable=SC1090
 source "$CONFIG_FILE"
@@ -40,7 +40,7 @@ else
   grep -Fqx -- "$SSH_PUBLIC_KEY" "$HOME_DIR/.ssh/authorized_keys" || printf '%s\n' "$SSH_PUBLIC_KEY" >> "$HOME_DIR/.ssh/authorized_keys"
 fi
 run install -d -m 755 /etc/ssh/sshd_config.d
-DROPIN=/etc/ssh/sshd_config.d/99-server-hardening.conf
+DROPIN=/etc/ssh/sshd_config.d/00-server-hardening.conf
 if ((DRY_RUN)); then log "Would write SSH hardening drop-in $DROPIN"; else
   TMP="$(mktemp)"
   cat >"$TMP" <<EOF
@@ -72,7 +72,7 @@ if ((DRY_RUN)); then log "Would install backup script, daily job and logrotate p
   install -m 644 "$HERE/../config/logrotate-server-hardening" /etc/logrotate.d/server-hardening
   logrotate -d /etc/logrotate.d/server-hardening >/dev/null
 fi
-if systemctl list-unit-files | grep -q '^ssh\.service'; then run systemctl enable ssh; run systemctl reload ssh
-elif systemctl list-unit-files | grep -q '^sshd\.service'; then run systemctl enable sshd; run systemctl reload sshd
+if systemctl list-unit-files | grep -q '^ssh\.service'; then run systemctl enable --now ssh; run systemctl reload-or-restart ssh
+elif systemctl list-unit-files | grep -q '^sshd\.service'; then run systemctl enable --now sshd; run systemctl reload-or-restart sshd
 else die "No ssh.service or sshd.service unit found."; fi
 log "Provisioning complete. Test key login in a second session before closing this one."
