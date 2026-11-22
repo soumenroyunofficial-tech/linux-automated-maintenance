@@ -58,6 +58,8 @@ sudo sshd -T | grep -E '^(port|permitrootlogin|passwordauthentication|pubkeyauth
 sudo ufw status verbose
 sudo systemctl is-enabled ssh || sudo systemctl is-enabled sshd
 sudo systemctl is-active ssh || sudo systemctl is-active sshd
+sudo systemctl is-enabled cron
+sudo systemctl is-active cron
 sudo logrotate -d /etc/logrotate.d/server-hardening
 sudo /usr/local/sbin/server-hardening-backup.sh
 sudo ls -lh /var/backups/server-hardening/
