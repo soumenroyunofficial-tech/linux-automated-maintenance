@@ -1,0 +1,6 @@
+# Copy to /etc/server-hardening.conf and edit before provisioning.
+ADMIN_USER="opsadmin"
+SSH_PORT="22"
+SSH_PUBLIC_KEY="REPLACE_WITH_YOUR_SSH_PUBLIC_KEY"
+BACKUP_DIR="/var/backups/server-hardening"
+RETENTION_DAYS="14"
